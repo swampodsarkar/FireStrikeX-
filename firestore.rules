@@ -1,0 +1,134 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // 1. Global Safety Net: Default Deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // 2. Core Reusable Helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // 3. Schema Validador Helpers
+    function isValidPlayerProfile(data) {
+      return data.keys().hasAll(['uid', 'username', 'avatar', 'level', 'xp', 'coins', 'gems', 'wins', 'losses', 'rankPoints', 'league'])
+          && data.uid is string && data.uid.size() <= 128
+          && data.username is string && data.username.size() >= 3 && data.username.size() <= 30
+          && data.avatar is string && data.avatar.size() <= 64
+          && data.level is int && data.level >= 1 && data.level <= 100
+          && data.xp is int && data.xp >= 0
+          && data.coins is int && data.coins >= 0
+          && data.gems is int && data.gems >= 0
+          && data.wins is int && data.wins >= 0
+          && data.losses is int && data.losses >= 0
+          && data.rankPoints is int && data.rankPoints >= -100 // support buffer
+          && data.league is string && data.league.size() <= 32;
+    }
+
+    function isValidHero(data) {
+      return data.keys().hasAll(['heroId', 'level', 'unlocked', 'selectedSkin', 'unlockedSkins'])
+          && data.heroId is string && data.heroId.size() <= 64
+          && data.level is int && data.level >= 1 && data.level <= 50
+          && data.unlocked is bool
+          && data.selectedSkin is string && data.selectedSkin.size() <= 64
+          && data.unlockedSkins is list;
+    }
+
+    function isValidQueueEntry(data) {
+      return data.keys().hasAll(['uid', 'username', 'avatar', 'rankPoints', 'joinedAt', 'selectedHeroId', 'selectedSkin'])
+          && data.uid is string && data.uid.size() <= 128
+          && data.username is string && data.username.size() <= 30
+          && data.avatar is string && data.avatar.size() <= 64
+          && data.rankPoints is int
+          && data.joinedAt is timestamp
+          && data.selectedHeroId is string && data.selectedHeroId.size() <= 64
+          && data.selectedSkin is string && data.selectedSkin.size() <= 64;
+    }
+
+    function isValidMatchState(data) {
+      return data.keys().hasAll(['matchId', 'status', 'currentTurn', 'turnNumber', 'playerA', 'playerB', 'battleLogs'])
+          && data.matchId is string && data.matchId.size() <= 128
+          && data.status is string && (data.status == 'waiting' || data.status == 'active' || data.status == 'finished')
+          && data.currentTurn is string && data.currentTurn.size() <= 128
+          && data.turnNumber is int
+          && data.playerA is map
+          && data.playerB is map
+          && data.battleLogs is list;
+    }
+
+    // 4. Match Rules for Collections
+
+    // Player documents
+    match /players/{playerId} {
+      allow read: if isSignedIn();
+      allow create: if isOwner(playerId) 
+                    && isValidPlayerProfile(incoming()) 
+                    && incoming().uid == request.auth.uid;
+      
+      allow update: if isOwner(playerId)
+                    && isValidPlayerProfile(incoming())
+                    && incoming().uid == existing().uid
+                    && (
+                      incoming().diff(existing()).affectedKeys().hasAny([
+                        'username', 'avatar', 'level', 'xp', 'coins', 'gems', 
+                        'wins', 'losses', 'rankPoints', 'league', 
+                        'lastClaimedRewardDate', 'dailyStreak'
+                      ])
+                    );
+      allow delete: if false;
+
+      // Owned heroes subcollection
+      match /heroes/{heroId} {
+        allow read: if isSignedIn();
+        allow create, update: if isOwner(playerId) && isValidHero(incoming());
+        allow delete: if false;
+      }
+    }
+
+    // Matchmaking queue collection
+    match /matchmaking/queue/entries/{userId} {
+      allow read: if isSignedIn();
+      allow create: if isOwner(userId) && isValidQueueEntry(incoming());
+      allow update: if isOwner(userId) && isValidQueueEntry(incoming());
+      allow delete: if isOwner(userId);
+    }
+
+    // Active Matches collection
+    match /matches/{matchId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isValidMatchState(incoming());
+      
+      allow update: if isSignedIn() 
+                    && isValidMatchState(incoming())
+                    && (existing().playerA.uid == request.auth.uid || existing().playerB.uid == request.auth.uid)
+                    && (existing().status != 'finished') // Terminal lock
+                    && (
+                      incoming().diff(existing()).affectedKeys().hasAny([
+                        'status', 'currentTurn', 'turnNumber', 'turnDeadline', 
+                        'playerA', 'playerB', 'battleLogs', 'winnerId', 'loserId', 
+                        'lastActionTime'
+                      ])
+                    );
+      allow delete: if false;
+    }
+  }
+}

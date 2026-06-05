@@ -1,0 +1,112 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;750&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Space Grotesk", "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --color-slate-950: #0A0A0C;
+  --color-slate-900: #121216;
+  --color-slate-850: rgba(255, 255, 255, 0.06);
+  --color-slate-800: rgba(255, 255, 255, 0.08);
+}
+
+/* Custom esports aesthetic animations */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px) rotate(-1deg); }
+  75% { transform: translateX(6px) rotate(1deg); }
+}
+
+@keyframes flash-red {
+  0%, 100% { background-color: transparent; }
+  50% { background-color: rgba(239, 68, 68, 0.4); }
+}
+
+@keyframes float-damage {
+  0% { transform: translateY(0) scale(0.8); opacity: 0; }
+  20% { opacity: 1; transform: translateY(-15px) scale(1.2); }
+  100% { transform: translateY(-40px) scale(0.9); opacity: 0; }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { filter: drop-shadow(0 0 4px var(--color-sky-500)); }
+  50% { filter: drop-shadow(0 0 16px var(--color-sky-400)); }
+}
+
+.animate-shake {
+  animation: shake 0.3s ease-in-out;
+}
+
+.animate-flash-red {
+  animation: flash-red 0.4s ease-out;
+}
+
+.animate-float-damage {
+  animation: float-damage 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.glow-orange {
+  filter: drop-shadow(0 0 8px #f97316);
+}
+
+.glow-sky {
+  filter: drop-shadow(0 0 8px #38bdf8);
+}
+
+.glow-purple {
+  filter: drop-shadow(0 0 8px #c084fc);
+}
+
+.animation-delay-150 {
+  animation-delay: 0.15s;
+}
+
+/* Custom scrollbar for mobile feel */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.8);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.5);
+  border-radius: 4px;
+}
+
+/* Real-time high-fidelity hologram scan lines */
+.hologram-scan {
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.25) 50%
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+}
+
+.radar-sweep::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, transparent 48%, rgba(245, 158, 11, 0.12) 50%, transparent 52%);
+  animation: radar-sweep-anim 6s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes radar-sweep-anim {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+@keyframes fade-in {
+  0% { opacity: 0; transform: translateX(10px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out forwards;
+}

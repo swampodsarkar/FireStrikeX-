@@ -1,0 +1,6 @@
+{
+  "name": "Hero Arena Legends",
+  "description": "A turn-based online 1v1 esports-style battle arena mobile game featuring live matchmaking, realtime synchronization, hero upgrades, shop, daily claiming systems, and responsive battles.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

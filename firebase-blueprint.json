@@ -1,0 +1,91 @@
+{
+  "entities": {
+    "PlayerProfile": {
+      "title": "Player Profile",
+      "description": "The profile data of an arena player.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "The unique user ID" },
+        "username": { "type": "string", "description": "The display username of the player" },
+        "avatar": { "type": "string", "description": "The selected avatar image key" },
+        "level": { "type": "integer", "description": "Current player level" },
+        "xp": { "type": "integer", "description": "XP progress" },
+        "coins": { "type": "integer", "description": "Coins balance" },
+        "gems": { "type": "integer", "description": "Gems balance" },
+        "wins": { "type": "integer", "description": "Total wins" },
+        "losses": { "type": "integer", "description": "Total losses" },
+        "rankPoints": { "type": "integer", "description": "Rank points for MMR matchmaking" },
+        "league": { "type": "string", "description": "Current league (Bronze, Silver, Gold, Platinum, Diamond, Master, Legend)" },
+        "lastClaimedRewardDate": { "type": "string", "description": "ISO timestamp of the last claimed daily reward" },
+        "dailyStreak": { "type": "integer", "description": "Consecutive login days" }
+      },
+      "required": ["uid", "username", "avatar", "level", "xp", "coins", "gems", "wins", "losses", "rankPoints", "league"]
+    },
+    "Hero": {
+      "title": "Hero Configuration",
+      "description": "The upgrade stats and skins for a specific hero owned by a user.",
+      "type": "object",
+      "properties": {
+        "heroId": { "type": "string", "description": "Unique identifier for the hero archetype" },
+        "level": { "type": "integer", "description": "The level of the hero" },
+        "unlocked": { "type": "boolean", "description": "Whether the player unlocked the hero" },
+        "selectedSkin": { "type": "string", "description": "Currently equipped skin ID" },
+        "unlockedSkins": { "type": "array", "description": "List of skin IDs unlocked" }
+      },
+      "required": ["heroId", "level", "unlocked", "selectedSkin", "unlockedSkins"]
+    },
+    "QueueEntry": {
+      "title": "Matchmaking Queue Entry",
+      "description": "Represents a player currently waiting in the matchmaking queue.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "username": { "type": "string" },
+        "avatar": { "type": "string" },
+        "rankPoints": { "type": "integer" },
+        "league": { "type": "string" },
+        "joinedAt": { "type": "string", "format": "date-time" },
+        "selectedHeroId": { "type": "string" },
+        "selectedSkin": { "type": "string" }
+      },
+      "required": ["uid", "username", "avatar", "rankPoints", "joinedAt", "selectedHeroId", "selectedSkin"]
+    },
+    "MatchState": {
+      "title": "Match State",
+      "description": "State tracking for an active turned-based 1v1 battle.",
+      "type": "object",
+      "properties": {
+        "matchId": { "type": "string" },
+        "status": { "type": "string", "enum": ["waiting", "active", "finished"] },
+        "winnerId": { "type": "string" },
+        "loserId": { "type": "string" },
+        "currentTurn": { "type": "string", "description": "UID of the player whose turn it is" },
+        "turnNumber": { "type": "integer" },
+        "turnDeadline": { "type": "integer", "description": "Unix milliseconds for timeout of turn" },
+        "playerA": { "type": "object" },
+        "playerB": { "type": "object" },
+        "battleLogs": { "type": "array" },
+        "lastActionTime": { "type": "string" }
+      },
+      "required": ["matchId", "status", "currentTurn", "turnNumber", "playerA", "playerB", "battleLogs"]
+    }
+  },
+  "firestore": {
+    "players/{playerId}": {
+      "schema": "PlayerProfile",
+      "description": "Player files containing profiles and statistics"
+    },
+    "players/{playerId}/heroes/{heroId}": {
+      "schema": "Hero",
+      "description": "Individual hero rosters for each player containing levels and unlocked skins"
+    },
+    "matchmaking/queue/entries/{userId}": {
+      "schema": "QueueEntry",
+      "description": "Active queue entries for online matching"
+    },
+    "matches/{matchId}": {
+      "schema": "MatchState",
+      "description": "Active battle simulations and real-time state synchronization rooms"
+    }
+  }
+}
