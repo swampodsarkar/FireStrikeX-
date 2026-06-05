@@ -1,16 +1,15 @@
-import { BrLootItem, BrZoneState, BR_WEAPONS, BR_MAP_SIZE, BR_ZONE_PHASES } from '../types';
+import { BrLootItem, BrZoneState, BR_MAP_SIZE, BR_ZONE_PHASES, BR_LOOT_TYPES } from '../types';
 
-const LOOT_TYPES = ['pistol', 'ar', 'shotgun', 'sniper', 'armor', 'health'];
-const LOOT_COUNT = 30;
+const LOOT_COUNT = 50;
 
 export function generateLoot(): BrLootItem[] {
   const items: BrLootItem[] = [];
   for (let i = 0; i < LOOT_COUNT; i++) {
     items.push({
       id: `loot_${i}`,
-      x: (Math.random() - 0.5) * BR_MAP_SIZE * 1.5,
-      z: (Math.random() - 0.5) * BR_MAP_SIZE * 1.5,
-      type: LOOT_TYPES[Math.floor(Math.random() * LOOT_TYPES.length)],
+      x: (Math.random() - 0.5) * 180,
+      z: (Math.random() - 0.5) * 180,
+      type: BR_LOOT_TYPES[Math.floor(Math.random() * BR_LOOT_TYPES.length)],
       taken: false,
     });
   }

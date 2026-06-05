@@ -591,12 +591,39 @@ export interface BrMatchState {
   teams: BrTeam[];
 }
 
-export const BR_WEAPONS: Record<string, { name: string; damage: number; range: number; fireRate: number }> = {
-  pistol: { name: 'Pistol', damage: 15, range: 30, fireRate: 400 },
-  ar: { name: 'Assault Rifle', damage: 12, range: 50, fireRate: 150 },
-  shotgun: { name: 'Shotgun', damage: 30, range: 15, fireRate: 800 },
-  sniper: { name: 'Sniper', damage: 50, range: 80, fireRate: 1200 },
+export const BR_WEAPONS: Record<string, { name: string; damage: number; range: number; fireRate: number; ammo: number }> = {
+  pistol:    { name: 'Pistol',         damage: 15, range: 30, fireRate: 400, ammo: 15 },
+  ar:        { name: 'Assault Rifle',  damage: 12, range: 50, fireRate: 150, ammo: 30 },
+  shotgun:   { name: 'Shotgun',        damage: 30, range: 15, fireRate: 800, ammo: 8 },
+  sniper:    { name: 'Sniper',         damage: 50, range: 80, fireRate: 1200, ammo: 5 },
+  ump:       { name: 'UMP SMG',        damage: 10, range: 35, fireRate: 100, ammo: 25 },
+  ak:        { name: 'AK-47',          damage: 14, range: 55, fireRate: 130, ammo: 30 },
+  m1014:     { name: 'M1014 Shotgun',  damage: 28, range: 18, fireRate: 700, ammo: 7 },
+  awm:       { name: 'AWM Sniper',     damage: 60, range: 90, fireRate: 1500, ammo: 5 },
+  m249:      { name: 'M249 LMG',       damage: 11, range: 45, fireRate: 120, ammo: 100 },
 };
+
+export const BR_MEDKITS = {
+  medkit:    { name: 'Medkit',      heal: 50, icon: '💊' },
+  bandage:   { name: 'Bandage',     heal: 15, icon: '🩹' },
+  largeMed:  { name: 'Large Med',   heal: 100, icon: '🏥' },
+};
+
+export const BR_LOOT_TYPES = [
+  'pistol', 'ar', 'shotgun', 'sniper', 'ump', 'ak', 'm1014', 'awm', 'm249',
+  'armor', 'medkit', 'bandage', 'largeMed',
+];
+
+export const BR_MAP_LOCATIONS = [
+  { name: 'Hades Peak',     x: -30, z: -30, color: '#ff4444' },
+  { name: 'Clockwise City', x: 30,  z: -25, color: '#44aaff' },
+  { name: 'Dockyard',       x: -25, z: 30,  color: '#44ff44' },
+  { name: 'Sanctuary',      x: 25,  z: 25,  color: '#ffaa44' },
+  { name: 'Boneyard',       x: -5,  z: -5,  color: '#aa44ff' },
+  { name: 'Frost Village',  x: -35, z: 5,   color: '#44ffff' },
+  { name: 'Mill',           x: 35,  z: 0,   color: '#ff44ff' },
+  { name: 'Cathedral',      x: 0,   z: 35,  color: '#ffff44' },
+];
 
 export const BR_MAP_SIZE = 100;
 export const BR_MIN_PLAYERS = 2;
@@ -619,4 +646,6 @@ export const BR_MODE_CONFIG = {
   solo: { teamSize: 1, maxPlayers: 10, maxTeams: 10, label: 'Solo', icon: '1' },
   duo:  { teamSize: 2, maxPlayers: 10, maxTeams: 5,  label: 'Duo',  icon: '2' },
 };
+
+export type BrMatchPhase = 'plane' | 'parachute' | 'active';
 
