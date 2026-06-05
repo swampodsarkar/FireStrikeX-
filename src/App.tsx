@@ -6,11 +6,10 @@ import {
   collection, query, queryEqual, getDocs, deleteDoc 
 } from './lib/firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { 
-  PlayerProfile, UserHero, QueueEntry, MatchState, 
+import { PlayerProfile, UserHero, QueueEntry, MatchState, 
   BattleParticipant, HEROES_DATABASE, getLeagueForPoints,
   DAILY_MISSIONS, ACHIEVEMENTS, DailyMission, Achievement, BattlePassState, BATTLE_PASS_LEVELS,
-  BattlePassLevel, CustomRoom
+  BattlePassLevel, CustomRoom, BrMode
 } from './types';
 
 // Import all screens
@@ -44,6 +43,7 @@ export default function App() {
   const [heroes, setHeroes] = useState<UserHero[]>([]);
   const [activeMatchId, setActiveMatchId] = useState<string | null>(null);
   const [brMatchId, setBrMatchId] = useState<string | null>(null);
+  const [brMode, setBrMode] = useState<BrMode>('solo');
   const [missions, setMissions] = useState<DailyMission[]>([]);
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [missionsOpen, setMissionsOpen] = useState(false);
@@ -1124,7 +1124,7 @@ export default function App() {
                 <BRLobby
                   profile={profile}
                   onBack={() => setCurrentScreen('home')}
-                  onStartMatch={(mid) => { setBrMatchId(mid); setCurrentScreen('br_game'); }}
+                  onStartMatch={(mid, mode) => { setBrMatchId(mid); setBrMode(mode); setCurrentScreen('br_game'); }}
                 />
               </motion.div>
             )}
@@ -1135,6 +1135,7 @@ export default function App() {
                 <BRGame
                   profile={profile}
                   matchId={brMatchId}
+                  mode={brMode}
                   onBack={() => { setBrMatchId(null); setCurrentScreen('home'); }}
                 />
               </motion.div>

@@ -559,6 +559,7 @@ export interface BrPlayerState {
   alive: boolean;
   kills: number;
   weapon: string;
+  teamId: number;
 }
 
 export interface BrLootItem {
@@ -586,6 +587,8 @@ export interface BrMatchState {
   loot: BrLootItem[];
   winnerId?: string;
   startTime: number;
+  mode: BrMode;
+  teams: BrTeam[];
 }
 
 export const BR_WEAPONS: Record<string, { name: string; damage: number; range: number; fireRate: number }> = {
@@ -603,4 +606,17 @@ export const BR_ZONE_PHASES = [
   { radius: 30, wait: 25, shrinkTo: 15 },  // Phase 2
   { radius: 15, wait: 20, shrinkTo: 5 },   // Phase 3
 ];
+
+export interface BrTeam {
+  id: number;
+  members: string[];  // up to 2 UIDs
+  alive: boolean;
+}
+
+export type BrMode = 'solo' | 'duo';
+
+export const BR_MODE_CONFIG = {
+  solo: { teamSize: 1, maxPlayers: 10, maxTeams: 10, label: 'Solo', icon: '1' },
+  duo:  { teamSize: 2, maxPlayers: 10, maxTeams: 5,  label: 'Duo',  icon: '2' },
+};
 
