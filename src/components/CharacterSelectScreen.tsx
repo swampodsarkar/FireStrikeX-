@@ -37,7 +37,7 @@ export default function CharacterSelectScreen({ profile, selectedChar, onSelect,
                   <span className="font-heading text-xs font-black">{ch.name}</span>
                   {selected && <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />}
                 </div>
-                <p className="text-[8px] font-mono text-slate-500 mt-0.5">{ch.role}</p>
+                <p className="text-[8px] font-mono text-slate-500 mt-0.5">{ch.heroClass}</p>
                 <div className="flex gap-2 mt-1 text-[7px] font-mono text-slate-600">
                   <span>HP {ch.baseHp}</span>
                   <span>ATK {ch.baseAttack}</span>

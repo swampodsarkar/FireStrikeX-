@@ -143,12 +143,13 @@ export default function App() {
         {/* Daily Rewards Modal (global) */}
         {showDailyRewards && profile && (
           <DailyRewardsModal
-            streak={profile.dailyStreak}
-            onClaim={async () => {
+            profile={profile}
+            onClaim={async (claimedAmt: number, rewardType: string, newStreak: number) => {
               const today = new Date().toDateString();
-              const newStreak = profile.dailyStreak + 1;
-              const reward = Math.min(newStreak, 7) * 50;
-              updateProfile({ dailyStreak: newStreak, lastClaimedRewardDate: today, coins: profile.coins + reward });
+              const updates: Partial<PlayerProfile> = { lastClaimedRewardDate: today, dailyStreak: newStreak };
+              if (rewardType === 'coins') updates.coins = profile.coins + claimedAmt;
+              if (rewardType === 'gems') updates.gems = profile.gems + claimedAmt;
+              updateProfile(updates);
               setShowDailyRewards(false);
             }}
             onClose={() => setShowDailyRewards(false)}
